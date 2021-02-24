@@ -1,0 +1,32 @@
+<Messages>
+  <Message>
+    <Type>TimedMessage</Type> <!-- (Required) The type of message, in this case a message that is repeated every [[Duration_Between]] -->
+    <Enabled>True</Enabled> <!-- (Required) Is this message currently enabled? -->
+    <Sender>Announcement</Sender> <!-- (Optional, Default: Server) The sender of the message -->
+    <Text>Merry Christmas!</Text> <!-- (Required) The text of the message -->
+    <Start_At>2021-12-24 00:00:00</Start_At> <!-- (Optional, Default: Null) When should this message be enabled (In case of specific date messages, such as christmas) -->
+    <Duration_Between>01:00:00</Duration_Between> <!-- (Required) How often should this message be sent. format: Hour:Minute:Second (Seconds are ignored) -->
+    <End_At>2021-12-25 00:00:00</End_At> <!-- (Optional, Default: Null) When should this message be disabled again (In case of specific date messages, such as christmas) -->
+  </Message>
+  <Message>
+	<Type>FixedTimedMessage</Type> <!-- (Required) The type of message, in this case a message that is sent at a fixed time every day -->
+	<Enabled>True</Enabled> <!-- (Required) Is this message currently enabled? -->
+	<Sender>Server</Sender> <!-- (Optional, Default: Server) The sender of the message -->
+	<Text>The server will restart in 10 minutes, please logout before then!</Text> <!-- (Required) The text of the message -->
+	<Time>05:50</Time> <!-- (Required) When should this message be sent? format: Hour:Minute -->
+  </Message>
+  <Message>
+	<Type>FixedTimedMessage</Type> <!-- (Required) The type of message, in this case a message that is sent at a fixed time every day -->
+	<Enabled>True</Enabled> <!-- (Required) Is this message currently enabled? -->
+	<Sender>Server</Sender> <!-- (Optional, Default: Server) The sender of the message -->
+	<Text>The server will restart in 5 minutes, please logout before then!</Text> <!-- (Required) The text of the message -->
+	<Time>05:55</Time> <!-- (Required) When should this message be sent? format: Hour:Minute -->
+  </Message>
+  <Message>
+	<Type>FixedTimedMessage</Type> <!-- (Required) The type of message, in this case a message that is sent at a fixed time every day -->
+	<Enabled>True</Enabled> <!-- (Required) Is this message currently enabled? -->
+	<Sender>Server</Sender> <!-- (Optional, Default: Server) The sender of the message -->
+	<Text>The server will now restart!</Text> <!-- (Required) The text of the message -->
+	<Time>06:00</Time> <!-- (Required) When should this message be sent? format: Hour:Minute -->
+  </Message>
+</Messages>
