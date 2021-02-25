@@ -49,7 +49,7 @@ namespace ServerMessages
             if(message is TimedMessage timedMessage)
             {
                 var startAtNode = messageNode.SelectSingleNode(".//Start_At");
-                if (startAtNode != null && !String.IsNullOrEmpty(startAtNode.InnerText))
+                if (startAtNode != null && !String.IsNullOrEmpty(startAtNode.InnerText) && !"null".Equals(startAtNode.InnerText))
                     timedMessage.StartAt = DateTime.Parse(startAtNode.InnerText);
 
                 var durationNode = messageNode.SelectSingleNode(".//Duration_Between");
@@ -61,7 +61,7 @@ namespace ServerMessages
                 timedMessage.DurationBetween = TimeSpan.Parse(durationNode.InnerText);
 
                 var endAtNode = messageNode.SelectSingleNode(".//End_At");
-                if (endAtNode != null && !String.IsNullOrEmpty(endAtNode.InnerText))
+                if (endAtNode != null && !String.IsNullOrEmpty(endAtNode.InnerText) && !"null".Equals(endAtNode.InnerText))
                     timedMessage.EndAt = DateTime.Parse(endAtNode.InnerText);
 
                 return true;
