@@ -27,8 +27,12 @@ namespace ServerMessages
 
             MessageFactory.Init();
             LoadMessages();
+        }
 
-
+        public static void LogDebug(object data)
+        {
+            if(InstanceLogger != null && Configs.ShowDebugMessages.Value)
+                InstanceLogger.LogDebug(data);
         }
 
         private void Awake()
@@ -48,15 +52,18 @@ namespace ServerMessages
 
                 InvokeRepeating("SendFixedTimedMessages", Configs.ConfigCheckTimeout.Value, Configs.ConfigCheckTimeout.Value);
 
-                TimedMessage shorestTimedMessage = Messages.Where(m => m is TimedMessage).OrderBy(m => ((TimedMessage)m).DurationBetween.TotalSeconds).FirstOrDefault() as TimedMessage;
-                if(shorestTimedMessage != null)
-                    InvokeRepeating("SendTimedMessages", 0f, (float)(shorestTimedMessage.DurationBetween.TotalSeconds / 2d));
 
+                if(Messages.Any(m => m is TimedMessage))
+                {
+                    float checkTime = Mathf.Clamp((float)((TimedMessage)Messages.Where(m => m is TimedMessage).OrderBy(m => ((TimedMessage)m).DurationBetween).FirstOrDefault()).DurationBetween.TotalSeconds / 2f, 10f, 59f);
+                    InvokeRepeating("SendTimedMessages", 0f, checkTime);
+                }
             }
         }
 
         private void SendTimedMessages()
         {
+            LogDebug($"Checking {Messages.Count(m => m is TimedMessage && m.Enabled)} TimedMessages");
             foreach (BaseMessage msg in Messages.Where(m => m.Enabled && m.ShouldSend() && m is TimedMessage))
             {
                 msg.SendMessage();
@@ -65,6 +72,7 @@ namespace ServerMessages
 
         private void SendFixedTimedMessages()
         {
+            LogDebug($"Checking {Messages.Count(m => m is FixedTimedMessage && m.Enabled)} FixedTimedMessages");
             foreach (BaseMessage msg in Messages.Where(m => m.Enabled && m.ShouldSend() && m is FixedTimedMessage))
             {
                 msg.SendMessage();
@@ -81,11 +89,11 @@ namespace ServerMessages
                     var messages = DeserializeMessages(filePath);
                     if (messages != null && messages.Any())
                     {
-                        Logger.LogDebug($"Found {messages.Length} messages");
+                        LogDebug($"Found {messages.Length} messages");
                         Messages.AddRange(messages);
                     }
                     else if(!messages.Any())
-                        Logger.LogDebug($"No messages in config!");
+                        LogDebug($"No messages in config!");
                     else
                         Logger.LogError($"Failed to deserialise messages config (ServerMessages.xml)");
                 }
@@ -96,17 +104,16 @@ namespace ServerMessages
             }
             else
             {
-                System.IO.File.WriteAllText(filePath, Properties.Resources.ExampleMessages);
-                /*TimedMessage exampleMsg = new TimedMessage() { Text = "This is an example timed message", Enabled = false, DurationBetween = TimeSpan.FromMinutes(1), StartAt = DateTime.Now };
-                BaseMessage[] messageArray = new BaseMessage[] { exampleMsg };
-                SerializeMessages(messageArray, filePath);*/
+                System.IO.File.WriteAllText(filePath, Properties.Resources.ExampleMessages, Encoding.UTF8);
             }
         }
 
         private BaseMessage[] DeserializeMessages(String filename)
         {
+            String xml = System.IO.File.ReadAllText(filename, Encoding.UTF8);
+
             System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
-            doc.Load(filename);
+            doc.LoadXml(xml);
 
             List<BaseMessage> messages = new List<BaseMessage>();
 

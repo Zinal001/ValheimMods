@@ -20,7 +20,6 @@ namespace ServerMessages
             if(DateTime.Now.Hour == Time.Hour && DateTime.Now.Minute == Time.Minute)
             {
                 double totalSecs = DateTime.Now.Subtract(_LastSent).TotalSeconds;
-                //ServerMessagesPlugin.InstanceLogger.LogDebug($"Should send: {totalSecs}");
                 if (totalSecs >= 50d)
                     return true;
             }
@@ -32,7 +31,6 @@ namespace ServerMessages
         {
             base.SendMessage();
             _LastSent = DateTime.Now;
-            //ServerMessagesPlugin.InstanceLogger.LogDebug("Sending FixedTimeMessage!");
         }
 
         public static bool Parse(BaseMessage message, XmlNode messageNode, ref String errorMessage)

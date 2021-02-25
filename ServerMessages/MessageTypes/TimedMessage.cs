@@ -30,12 +30,18 @@ namespace ServerMessages
         public override bool ShouldSend()
         {
             if (StartAt.HasValue && DateTime.Now < StartAt.Value)
+            {
                 return false;
+            }
 
             if (EndAt.HasValue && DateTime.Now > EndAt.Value)
+            {
                 return false;
+            }
 
-            return DateTime.Now.Subtract(LastSent) >= DurationBetween;
+            bool shouldSend = DateTime.Now.Subtract(LastSent) >= DurationBetween;
+
+            return shouldSend;
         }
 
         public static bool Parse(BaseMessage message, XmlNode messageNode, ref String errorMessage)
@@ -56,7 +62,7 @@ namespace ServerMessages
 
                 var endAtNode = messageNode.SelectSingleNode(".//End_At");
                 if (endAtNode != null && !String.IsNullOrEmpty(endAtNode.InnerText))
-                    timedMessage.StartAt = DateTime.Parse(endAtNode.InnerText);
+                    timedMessage.EndAt = DateTime.Parse(endAtNode.InnerText);
 
                 return true;
             }
