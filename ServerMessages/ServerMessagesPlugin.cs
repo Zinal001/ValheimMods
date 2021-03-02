@@ -42,7 +42,7 @@ namespace ServerMessages
 
         private void SetupRpc()
         {
-            if (ZRoutedRpc.instance == null)
+            if (ZNet.instance == null || ZRoutedRpc.instance == null)
                 return;
 
             if (!_RpcInstanceFound)
@@ -50,13 +50,15 @@ namespace ServerMessages
                 _RpcInstanceFound = true;
                 CancelInvoke("SetupRpc");
 
-                InvokeRepeating("SendFixedTimedMessages", Configs.ConfigCheckTimeout.Value, Configs.ConfigCheckTimeout.Value);
-
-
-                if(Messages.Any(m => m is TimedMessage))
+                if(ZNet.instance.IsServer())
                 {
-                    float checkTime = Mathf.Clamp((float)((TimedMessage)Messages.Where(m => m is TimedMessage).OrderBy(m => ((TimedMessage)m).DurationBetween).FirstOrDefault()).DurationBetween.TotalSeconds / 2f, 10f, 59f);
-                    InvokeRepeating("SendTimedMessages", 0f, checkTime);
+                    InvokeRepeating("SendFixedTimedMessages", Configs.ConfigCheckTimeout.Value, Configs.ConfigCheckTimeout.Value);
+
+                    if (Messages.Any(m => m is TimedMessage))
+                    {
+                        float checkTime = Mathf.Clamp((float)((TimedMessage)Messages.Where(m => m is TimedMessage).OrderBy(m => ((TimedMessage)m).DurationBetween).FirstOrDefault()).DurationBetween.TotalSeconds / 2f, 10f, 59f);
+                        InvokeRepeating("SendTimedMessages", 0f, checkTime);
+                    }
                 }
             }
         }
@@ -119,6 +121,11 @@ namespace ServerMessages
                     LogDebug($"No messages in config!");
                 else
                     Logger.LogError($"Failed to deserialise messages config (ServerMessages.json)");
+            }
+            else
+            {
+                String json = Properties.Resources.ExampleMessages;
+                System.IO.File.WriteAllText(filePath, json);
             }
         }
 

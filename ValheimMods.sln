@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerMessages", "ServerMes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerInventory", "ServerInventory\ServerInventory.csproj", "{07A7CB62-5126-45DF-8ED4-44194CA7B8ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerMessages-Client", "ServerMessages-Client\ServerMessages-Client.csproj", "{88D55F30-BC30-4308-82E8-8C128F0179B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{07A7CB62-5126-45DF-8ED4-44194CA7B8ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{07A7CB62-5126-45DF-8ED4-44194CA7B8ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{07A7CB62-5126-45DF-8ED4-44194CA7B8ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88D55F30-BC30-4308-82E8-8C128F0179B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88D55F30-BC30-4308-82E8-8C128F0179B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88D55F30-BC30-4308-82E8-8C128F0179B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88D55F30-BC30-4308-82E8-8C128F0179B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -12,6 +12,8 @@ namespace ServerMessages
     public class FixedTimedMessage : BaseMessage
     {
         public override MessageTypes MessageType => MessageTypes.FixedTimedMessage;
+
+        [Newtonsoft.Json.JsonProperty(Order = 4)]
         public Time Time { get; set; }
 
         private DateTime _LastSent = DateTime.Now;

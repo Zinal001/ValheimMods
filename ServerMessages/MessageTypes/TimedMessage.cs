@@ -13,10 +13,13 @@ namespace ServerMessages
     {
         public override MessageTypes MessageType => MessageTypes.TimedMessage;
 
+        [Newtonsoft.Json.JsonProperty(Order = 4)]
         public DateTime? StartAt { get; set; } = null;
 
+        [Newtonsoft.Json.JsonProperty(Order = 5)]
         public TimeSpan DurationBetween { get; set; }
 
+        [Newtonsoft.Json.JsonProperty(Order = 6)]
         public DateTime? EndAt { get; set; } = null;
 
         [NonSerialized]
