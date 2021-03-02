@@ -67,6 +67,7 @@ namespace ServerMessages
 
             if (Configs.ShowMessagesInConsole.Value)
                 ServerMessagesPlugin.InstanceLogger.LogInfo($"[{Sender}] {Text}");
+                //ServerMessagesPlugin.InstanceLogger.LogInfo($"[{Sender}] {Text}");
         }
 
         public enum MessageTypes

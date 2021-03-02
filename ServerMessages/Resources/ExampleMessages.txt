@@ -16,7 +16,7 @@
     "Enabled": false,
     "Sender": "Server",
     "Text": "This is an example message that is displayed every day at 12:00:00",
-    "Time": "00:10:00", /* When should this message be sent? format: Hour:Minute */
+    "Time": "12:00", /* When should this message be sent? format: Hour:Minute */
     "ShowOnHud": true,
     "HorizontalHudAlignment": "center",
     "VerticalHudAlignment": "top"

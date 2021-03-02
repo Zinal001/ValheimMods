@@ -52,6 +52,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\Newtonsoft.Json.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -67,9 +68,22 @@
       <HintPath>..\Libs\UnityEngine.CoreModule.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>..\Libs\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\Libs\UnityEngine.UI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>..\Libs\UnityEngine.UIModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseMessage.cs" />
+    <Compile Include="Client.cs" />
     <Compile Include="Configs.cs" />
     <Compile Include="JsonConverter.cs" />
     <Compile Include="MessageTypes\FixedTimedMessage.cs" />
@@ -79,9 +93,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Server.cs" />
     <Compile Include="ServerMessagesPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="MessageTypes\TimedMessage.cs" />
+    <Compile Include="SidedMod.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -94,6 +110,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(TargetDir)*.dll" "D:\Games\Steam\steamapps\common\Valheim dedicated server\BepInEx\plugins\ServerMessages\*.dll" /y</PostBuildEvent>
+    <PostBuildEvent>xcopy "$(TargetDir)*.dll" "D:\Games\Steam\steamapps\common\Valheim dedicated server\BepInEx\plugins\ServerMessages\*.dll" /y
+xcopy "$(TargetDir)*.dll" "D:\Games\Steam\steamapps\common\Valheim\BepInEx\plugins\ServerMessages\*.dll" /y</PostBuildEvent>
   </PropertyGroup>
 </Project>

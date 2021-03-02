@@ -9,10 +9,73 @@ using UnityEngine;
 
 namespace ServerMessages
 {
-    [BepInPlugin("nu.zinal.plugins.servermessagesplugin", "Server Messages", "1.0.0.0")]
+    [BepInPlugin("nu.zinal.plugins.servermessagesplugin", "Server Messages", "1.0.1")]
     public class ServerMessagesPlugin : BaseUnityPlugin
     {
-        internal static ServerMessagesPlugin Instance { get; private set; }
+        internal static BepInEx.Logging.ManualLogSource InstanceLogger { get; private set; }
+
+        private static List<SidedMod> _Sides = new List<SidedMod>();
+
+        private bool _ZNetIsInitialized = false;
+
+        /*public static Client ClientSide { get; private set; }
+        public static Server ServerSide { get; private set; }*/
+
+        public ServerMessagesPlugin()
+        {
+            InstanceLogger = Logger;
+            Configs.Init(this);
+
+            /*ServerSide = gameObject.AddComponent<Server>();
+            ClientSide = gameObject.AddComponent<Client>();*/
+        }
+
+        private void Awake()
+        {
+            InvokeRepeating("InitZNet", 0f, 5f);
+        }
+
+        private void InitZNet()
+        {
+            if (ZNet.instance == null || ZRoutedRpc.instance == null)
+                return;
+
+            _ZNetIsInitialized = true;
+
+            CancelInvoke("InitZNet");
+
+            Logger.LogInfo($"ZNet Initialized. IsServer: {ZNet.instance.IsServer()}, IsDedicated: {ZNet.instance.IsDedicated()}");
+
+            if (ZNet.instance.IsServer())
+                _Sides.Add(gameObject.AddComponent<Server>());
+            
+            if(!ZNet.instance.IsServer() || !ZNet.instance.IsDedicated())
+                _Sides.Add(gameObject.AddComponent<Client>());
+
+            InvokeRepeating("TrackZNetStatus", 5f, 5f);
+        }
+
+        private void TrackZNetStatus()
+        {
+            if(_ZNetIsInitialized && (ZNet.instance == null || ZRoutedRpc.instance == null))
+            {
+                Logger.LogInfo("Lost ZNet instance!");
+                foreach (var side in _Sides)
+                    side.enabled = false;
+                _ZNetIsInitialized = false;
+            }
+            else if(!_ZNetIsInitialized && ZNet.instance != null && ZRoutedRpc.instance != null)
+            {
+                Logger.LogInfo("Got ZNet instance!");
+                foreach (var side in _Sides)
+                    side.enabled = true;
+
+                _ZNetIsInitialized = true;
+            }
+        }
+
+
+        /*internal static ServerMessagesPlugin Instance { get; private set; }
         internal static BepInEx.Logging.ManualLogSource InstanceLogger { get; private set; }
         private readonly List<BaseMessage> Messages = new List<BaseMessage>();
 
@@ -161,6 +224,6 @@ namespace ServerMessages
 
 
             return messages.ToArray();
-        }
+        }*/
     }
 }

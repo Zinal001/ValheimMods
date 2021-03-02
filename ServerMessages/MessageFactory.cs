@@ -20,9 +20,22 @@ namespace ServerMessages
 
         public static void RegisterAssembly(Assembly assembly)
         {
-            Type[] messageTypes = assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(BaseMessage)) && t.IsPublic && !t.IsAbstract && t.IsClass).ToArray();
-            foreach(Type type in messageTypes)
-                RegisterType(type);
+            try
+            {
+                Type[] messageTypes = assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(BaseMessage)) && t.IsPublic && !t.IsAbstract && t.IsClass).ToArray();
+                foreach (Type type in messageTypes)
+                    RegisterType(type);
+            }
+            catch(ReflectionTypeLoadException typeLoadEx)
+            {
+                UnityEngine.Debug.LogError($"Unable to load Registry {assembly.FullName}: {typeLoadEx.Message}");
+                foreach (var ex in typeLoadEx.LoaderExceptions)
+                    UnityEngine.Debug.LogError(ex);
+            }
+            catch(Exception ex)
+            {
+                UnityEngine.Debug.LogError(ex);
+            }
         }
 
         public static void RegisterType(Type type)
