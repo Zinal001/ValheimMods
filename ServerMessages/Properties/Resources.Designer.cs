@@ -67,7 +67,7 @@ namespace ServerMessages.Properties {
         ///    &lt;Enabled&gt;True&lt;/Enabled&gt; &lt;!-- (Required) Is this message currently enabled? --&gt;
         ///    &lt;Sender&gt;Announcement&lt;/Sender&gt; &lt;!-- (Optional, Default: Server) The sender of the message --&gt;
         ///    &lt;Text&gt;Merry Christmas!&lt;/Text&gt; &lt;!-- (Required) The text of the message --&gt;
-        ///    &lt;Start_At&gt;2021-12-24 00:00:00&lt;/Start_At&gt; &lt;!-- (Optional, Default: Null) When should [rest of string was truncated]&quot;;.
+        ///    &lt;Start_At&gt;2021-12-24 00:00:00&lt;/Start_At&gt; &lt;!-- (Optional, Default: ) When should thi [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ExampleMessages {
             get {

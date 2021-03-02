@@ -22,21 +22,21 @@ namespace ServerMessages
         {
             Instance = this;
             InstanceLogger = Logger;
-
-            Configs.Init(this);
-
-            MessageFactory.Init();
-            LoadMessages();
         }
 
         public static void LogDebug(object data)
         {
-            if(InstanceLogger != null && Configs.ShowDebugMessages.Value)
+            if (InstanceLogger != null && Configs.ShowDebugMessages.Value)
                 InstanceLogger.LogDebug(data);
         }
 
         private void Awake()
         {
+            Configs.Init(this);
+
+            MessageFactory.Init();
+            LoadMessages();
+
             InvokeRepeating("SetupRpc", 0f, 5f);
         }
 
@@ -82,33 +82,47 @@ namespace ServerMessages
         private void LoadMessages()
         {
             String filePath = System.IO.Path.Combine(Paths.ConfigPath, "ServerMessages.xml");
+            if(System.IO.File.Exists(filePath))
+            {
+                Logger.LogInfo("Old version of ServerMessages.xml found, converting to .json");
+                var messages = DeserializeMessagesXml(filePath);
+
+                String json = JsonConverter.ConvertToJson(messages);
+
+                System.IO.File.WriteAllText(System.IO.Path.Combine(Paths.ConfigPath, "ServerMessages.json"), json);
+                System.IO.File.Delete(filePath);
+            }
+
+            filePath = System.IO.Path.Combine(Paths.ConfigPath, "ServerMessages.json");
             if (System.IO.File.Exists(filePath))
             {
-                try
+                String json = System.IO.File.ReadAllText(filePath);
+
+                var messages = JsonConverter.ConvertTo<BaseMessage[]>(json);
+                if (messages != null && messages.Any())
                 {
-                    var messages = DeserializeMessages(filePath);
-                    if (messages != null && messages.Any())
+                    if(Configs.ShowDebugMessages.Value)
                     {
-                        LogDebug($"Found {messages.Length} messages");
-                        Messages.AddRange(messages);
+                        Dictionary<BaseMessage.MessageTypes, int> msgTypes = new Dictionary<BaseMessage.MessageTypes, int>();
+                        foreach(BaseMessage msg in messages)
+                        {
+                            if (!msgTypes.ContainsKey(msg.MessageType))
+                                msgTypes[msg.MessageType] = 0;
+                            msgTypes[msg.MessageType]++;
+                        }
+
+                        LogDebug($"Found {messages.Length} messages. Types: {String.Join(", ", msgTypes.Select(p => $"{p.Key}: {p.Value}"))}");
                     }
-                    else if(!messages.Any())
-                        LogDebug($"No messages in config!");
-                    else
-                        Logger.LogError($"Failed to deserialise messages config (ServerMessages.xml)");
+                    Messages.AddRange(messages);
                 }
-                catch(Exception ex)
-                {
-                    Logger.LogError(ex);
-                }
-            }
-            else
-            {
-                System.IO.File.WriteAllText(filePath, Properties.Resources.ExampleMessages, Encoding.UTF8);
+                else if (!messages.Any())
+                    LogDebug($"No messages in config!");
+                else
+                    Logger.LogError($"Failed to deserialise messages config (ServerMessages.json)");
             }
         }
 
-        private BaseMessage[] DeserializeMessages(String filename)
+        private BaseMessage[] DeserializeMessagesXml(String filename)
         {
             String xml = System.IO.File.ReadAllText(filename, Encoding.UTF8);
 
@@ -140,60 +154,6 @@ namespace ServerMessages
 
 
             return messages.ToArray();
-        }
-
-        private static void SerializeMessages(BaseMessage[] messages, String filename)
-        {
-            System.Xml.XmlDocument doc = new System.Xml.XmlDocument();
-
-            var root = doc.AppendChild(doc.CreateElement("Messages"));
-
-            foreach(BaseMessage message in messages)
-            {
-                System.Xml.XmlNode msgNode = doc.CreateElement("Message");
-
-                System.Xml.XmlNode typeNode = doc.CreateElement("Type");
-                typeNode.InnerText = message.GetType().Name;
-                msgNode.AppendChild(typeNode);
-
-                System.Xml.XmlNode enabledNode = doc.CreateElement("Enabled");
-                enabledNode.InnerText = message.Enabled ? "True" : "False";
-                msgNode.AppendChild(enabledNode);
-
-                System.Xml.XmlNode senderNode = doc.CreateElement("Sender");
-                senderNode.InnerText = message.Sender;
-                msgNode.AppendChild(senderNode);
-
-                System.Xml.XmlNode textNode = doc.CreateElement("Text");
-                textNode.InnerText = message.Text;
-                msgNode.AppendChild(textNode);
-
-                if(message is TimedMessage timedMessage)
-                {
-                    System.Xml.XmlNode startAtNode = doc.CreateElement("Start_At");
-                    startAtNode.InnerText = timedMessage.StartAt.HasValue ? timedMessage.StartAt.Value.ToString("yyyy-MM-dd HH:mm:ss") : "";
-                    msgNode.AppendChild(startAtNode);
-
-                    System.Xml.XmlNode durationNode = doc.CreateElement("Duration_Between");
-                    durationNode.InnerText = timedMessage.DurationBetween.ToString("hh\\:mm\\:ss");
-                    msgNode.AppendChild(durationNode);
-
-                    System.Xml.XmlNode endAtNode = doc.CreateElement("End_At");
-                    endAtNode.InnerText = timedMessage.EndAt.HasValue ? timedMessage.EndAt.Value.ToString("yyyy-MM-dd HH:mm:ss") : "";
-                    msgNode.AppendChild(endAtNode);
-                }
-                else if(message is FixedTimedMessage fixedTimedMessage)
-                {
-                    System.Xml.XmlNode timeNode = doc.CreateElement("Time");
-                    timeNode.InnerText = fixedTimedMessage.Time.ToString();
-                    msgNode.AppendChild(timeNode);
-                }
-
-
-                root.AppendChild(msgNode);
-            }
-
-            doc.Save(filename);
         }
     }
 }

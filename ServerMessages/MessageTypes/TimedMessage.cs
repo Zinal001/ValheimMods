@@ -11,6 +11,8 @@ namespace ServerMessages
     [Serializable]
     public class TimedMessage : BaseMessage
     {
+        public override MessageTypes MessageType => MessageTypes.TimedMessage;
+
         public DateTime? StartAt { get; set; } = null;
 
         public TimeSpan DurationBetween { get; set; }

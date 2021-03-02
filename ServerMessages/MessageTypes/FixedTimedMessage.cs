@@ -11,6 +11,7 @@ namespace ServerMessages
     [Serializable]
     public class FixedTimedMessage : BaseMessage
     {
+        public override MessageTypes MessageType => MessageTypes.FixedTimedMessage;
         public Time Time { get; set; }
 
         private DateTime _LastSent = DateTime.Now;
@@ -59,6 +60,7 @@ namespace ServerMessages
         }
     }
 
+    [Serializable]
     public class Time
     {
         public int Hour { get; set; }

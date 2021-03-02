@@ -9,8 +9,10 @@ using UnityEngine;
 namespace ServerMessages
 {
     [Serializable]
-    public class BaseMessage
+    public abstract class BaseMessage
     {
+        public abstract MessageTypes MessageType { get; }
+
         public String Sender { get; set; } = "Server";
 
         public String Text { get; set; }
@@ -38,8 +40,25 @@ namespace ServerMessages
                 Text
             });
 
+            if(Configs.HudTextEnabled.Value)
+            {
+                ZRoutedRpc.instance.InvokeRoutedRPC(ZRoutedRpc.Everybody, "Announcement", new object[] {
+                    Configs.HudTextHorizontalPosition.Value,
+                    Configs.HudTextVerticalPosition.Value,
+                    Sender,
+                    Text
+                });
+            }
+            
+
             if (Configs.ShowMessagesInConsole.Value)
                 ServerMessagesPlugin.InstanceLogger.LogInfo($"[{Sender}] {Text}");
+        }
+
+        public enum MessageTypes
+        {
+            TimedMessage = 0,
+            FixedTimedMessage = 1
         }
     }
 }
